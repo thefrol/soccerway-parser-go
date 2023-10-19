@@ -7,6 +7,7 @@ import (
 
 	"github.com/gocolly/colly"
 	"github.com/thefrol/soccerway-parser-go/internal/parse"
+	"github.com/thefrol/soccerway-parser-go/internal/player"
 )
 
 // Hanler это точка входа для веб-контейнера типа aws-lambda,
@@ -25,9 +26,16 @@ func main() {
 		fmt.Println("Visiting", r.URL)
 	})
 
-	var firstName, lastName string
-	parse.Text(c, "dd[data-first_name]", &firstName)
-	parse.Text(c, "dd[data-last_name]", &lastName)
+	var player player.Raw
+	parse.Text(c, "dd[data-first_name]", &player.FirstName)
+	parse.Text(c, "dd[data-last_name]", &player.LastName)
+	parse.Text(c, "dd[data-nationality]", &player.Nationality)
+	parse.Text(c, "dd[data-date_of_birth]", &player.DateOfBirth)
+	parse.Text(c, "dd[data-age]", &player.Age)
+	parse.Text(c, "dd[data-country_of_birth]", &player.CountryOfBirth)
+	parse.Text(c, "dd[data-position]", &player.Position)
+	parse.Text(c, "dd[data-height]", &player.Height)
+	parse.Text(c, "dd[data-foot]", &player.Foot)
 
 	err := c.Visit("http://us.soccerway.com/players/danilo-malik-santos/871010/")
 	if err != nil {
@@ -35,5 +43,5 @@ func main() {
 		log.Fatal(err)
 	}
 
-	fmt.Println(firstName, lastName)
+	fmt.Printf("%+v", player)
 }
